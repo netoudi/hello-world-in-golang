@@ -5,10 +5,10 @@ WORKDIR /go/src/app
 COPY . .
 
 #### BUILD ###
-RUN go build App.go
+RUN go get -d -v
+RUN GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o /go/bin/app
 
 #### OPTIMIZE ####
-FROM golang:1.13-alpine
-WORKDIR /go/src/app
-COPY --from=builder /go/src/app/App .
-ENTRYPOINT ./App
+FROM scratch
+COPY --from=builder /go/bin/app /go/bin/app
+ENTRYPOINT ["/go/bin/app"]
